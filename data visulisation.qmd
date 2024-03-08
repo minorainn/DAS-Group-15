@@ -1,0 +1,113 @@
+---
+title: "DAS_Group15"
+format: html
+editor: visual
+html_document: default
+---
+
+## Exploratory Analysis
+
+```{r}
+library(skimr)
+library(magrittr)
+library(gt)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(GGally)
+```
+
+```{r}
+data15<-read.csv("dataset15.csv") %>%
+  na.omit()
+skim<-data15%>%
+  skim()
+selected_data <- skim[1:2, 1:9]
+tbl1<-gt(selected_data)
+tbl1
+```
+
+```{r}
+selected_data2<-skim[3:8,c(2,10:16)]
+tbl2<-gt(selected_data2)
+tbl2
+```
+
+Eliminate "0" in aroma, flavor and acidity.
+
+```{r}
+data15 <- data15 %>% 
+  filter(aroma != 0)%>%
+  filter(flavor != 0)%>%
+  filter(acidity != 0)
+
+```
+
+According to the figure above, eliminates the data with altitude_mean_meters higher than 9000, due to the inauthenticity.
+
+```{r}
+data15<-data15 %>%
+  filter(altitude_mean_meters<= 9000)
+```
+
+Summary the data again:
+
+```{r}
+skim2<-data15%>%
+  skim()
+selected_data3 <- skim2[1:2, 1:9]
+tbl3<-gt(selected_data3)
+tbl3
+```
+
+```{r}
+selected_data4<-skim2[3:8,c(2,10:16)]
+tbl4<-gt(selected_data4)
+tbl4
+```
+
+Doing a boxplot of aroma and quality class for the data set to find the relationship between them and test any outlier
+
+```{r}
+ggplot(data = data15, aes(x = Qualityclass, y = aroma, fill = Qualityclass)) +
+  geom_boxplot() +
+  labs(x = "Qualityclass", y = "aroma")
+```
+
+```{r}
+
+ggplot(data = data15, aes(x = Qualityclass, y = flavor, fill = Qualityclass)) +
+  geom_boxplot() +
+  labs(x = "Qualityclass", y = "flavor")+ 
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(data = data15, aes(x = Qualityclass, y = acidity, fill = Qualityclass)) +
+  geom_boxplot() +
+  labs(x = "Qualityclass", y = "acidity")+ 
+  theme(legend.position = "none")
+
+```
+
+```{r}
+ggplot(data = data15, aes(x = Qualityclass, y = altitude_mean_meters , fill = Qualityclass)) +
+  geom_boxplot() +
+  labs(x = "Qualityclass", y = "altitude_mean_meters")+ 
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(data = data15, aes(x = Qualityclass, y = category_two_defects , fill = Qualityclass)) +
+  geom_boxplot() +
+  labs(x = "Qualityclass", y = "category_two_defects")+ 
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(data15,aes(x=harvested,group=Qualityclass,fill=Qualityclass))+geom_bar()
+```
+
+```{r}
+ggplot(data15,aes(x=country_of_origin,group=Qualityclass,fill=Qualityclass))+geom_bar()
+```
