@@ -6,4 +6,27 @@ editor: visual
 
 ## DAS Group 15
 
-### 
+
+### Libraries
+
+Libraries to be used during project
+
+```{r}
+library(tidyverse) 
+library(moderndive) 
+library(gapminder) 
+library(sjPlot) 
+library(stats) 
+library(jtools)
+```
+
+### Data Tidying
+
+Here we will do some data tidying to take care of NA values
+
+```{r}
+data = read.csv("dataset15.csv")
+clean_data <- na.omit(data)
+head(clean_data)
+```
+
