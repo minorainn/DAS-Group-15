@@ -109,5 +109,7 @@ ggplot(data15,aes(x=harvested,group=Qualityclass,fill=Qualityclass))+geom_bar()
 ```
 
 ```{r}
-ggplot(data15,aes(x=country_of_origin,group=Qualityclass,fill=Qualityclass))+geom_bar()
+ggplot(data15, aes(x = country_of_origin, group = Qualityclass, fill = Qualityclass)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
