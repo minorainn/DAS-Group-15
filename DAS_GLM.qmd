@@ -1,0 +1,189 @@
+---
+title: "Generalised Linear Model"
+format: html
+editor: visual
+---
+
+## DAS Group 15
+
+### Libraries
+
+Libraries to be used during project
+
+```{r}
+library(tidyverse) 
+library(moderndive) 
+library(gapminder) 
+library(sjPlot) 
+library(stats) 
+library(jtools)
+```
+
+### Data Tidying
+
+Here we will do some data tidying to take care of NA values
+
+```{r}
+data = read.csv("dataset15.csv")
+clean_data <- na.omit(data)
+## Changing categorical variables to factor
+clean_data$Qualityclass <- factor(clean_data$Qualityclass)
+clean_data$harvested <- factor(clean_data$harvested)
+aic_list <- list()
+head(clean_data)
+```
+
+### GLM - Country of origin
+
+Here we will try a GLM with the country of origin as the only explanatory variable
+
+```{r}
+model_CO <- glm(Qualityclass ~ country_of_origin, data = clean_data,family = binomial(link = "logit"))
+aic_list$modelCO <- AIC(model_CO)
+```
+
+```{r}
+model_CO %>%   
+  summary() 
+```
+
+### GLM - Aroma
+
+Here we will try a GLM with the Aroma as the only explanatory variable
+
+```{r}
+model_aroma <- glm(Qualityclass ~ aroma, data = clean_data,family = binomial(link = "logit"))
+aic_list$modelaroma <- AIC(model_aroma)
+```
+
+```{r}
+model_aroma %>%   
+  summary() 
+```
+
+### GLM - Flavor
+
+Here we will try a GLM with the Flavor as the only explanatory variable
+
+```{r}
+model_flavor <- glm(Qualityclass ~ flavor, data = clean_data,family = binomial(link = "logit"))
+aic_list$model_flavor <- AIC(model_flavor)
+```
+
+```{r}
+model_flavor %>%   
+  summary() 
+```
+
+### GLM - Acidity
+
+Here we will try a GLM with the country of origin as the only explanatory variable
+
+```{r}
+model_acidity <- glm(Qualityclass ~ acidity , data = clean_data,family = binomial(link = "logit"))
+aic_list$model_acidity <- AIC(model_acidity)
+```
+
+```{r}
+model_acidity %>%   
+  summary() 
+```
+
+### GLM - Two defects
+
+Here we will try a GLM with the Two defects category as the only explanatory variable
+
+```{r}
+model_2_defects <- glm(Qualityclass ~ category_two_defects, data = clean_data, family = binomial(link = "logit"))
+aic_list$model_2_defects <- AIC(model_2_defects)
+```
+
+```{r}
+model_2_defects %>%   
+  summary() 
+```
+
+### GLM - Altitude
+
+Here we will try a GLM with the Altitude as the only explanatory variable
+
+```{r}
+
+model_altitude <- glm(Qualityclass ~ altitude_mean_meters, data = clean_data,family = binomial(link = "logit"))
+aic_list$model_altitude <- AIC(model_altitude)
+```
+
+```{r}
+model_altitude %>%   
+  summary() 
+```
+
+### GLM - Year Harvested 
+
+Here we will try a GLM with the harvest year category as the only explanatory variable
+
+```{r}
+
+model_harvested <- glm(Qualityclass ~ harvested , data = clean_data,family = binomial(link = "logit"))
+aic_list$model_harvested <- AIC(model_harvested)
+```
+
+```{r}
+model_harvested %>%   
+  summary() 
+```
+
+### GLM - Complete Model
+
+Here we will try a GLM with all of the available variables
+
+```{r}
+
+model_full <- glm(Qualityclass ~ country_of_origin + aroma + flavor + category_two_defects + altitude_mean_meters + acidity + harvested , data = clean_data,family = binomial(link = "logit"))
+aic_list$model_full <- AIC(model_full)
+```
+
+```{r}
+model_full %>%   
+  summary() 
+```
+
+### GLM - Stepwise Selected Model 
+
+```{r}
+stepwise_model <- step(model_full, direction = "both", trace = 0)
+aic_list$stepwise_model <- AIC(stepwise_model)
+```
+
+```{r}
+stepwise_model %>%
+  summary()
+
+```
+
+### AIC and Model Selection
+
+Here we compare all the AIC values for the different models.
+
+```{r}
+aic_df <- data.frame(Model = names(aic_list), AIC = as.numeric(aic_list))
+aic_df <- aic_df[order(aic_df$AIC), ]
+aic_df
+```
+
+```{r}
+# Create the bar plot
+barplot(aic_df$AIC, names.arg = aic_df$Model, 
+        main = "AIC Comparison of Models",, ylab = "AIC Value",
+        col = "skyblue", border = "black",
+        las = 2, cex.names = 0.8)
+
+# Rotate x-axis labels if needed
+# par(las = 2) 
+
+# Add a horizontal line at the minimum AIC value
+abline(h = min(aic_df$AIC), col = "red", lwd = 2, lty = 2)
+
+```
+
+Clearly by the plot, the two models with best performance according to AIC are the stepwise model and the model that contain all the variables. In this case, we selected the stepwise model as the best as it contains the lowest AIC and also removes 2 variables, which makes our model simpler.
