@@ -1,5 +1,0 @@
-#Here we will try a GLM with the country of origin as the only explanatory variable
-model_CO <- glm(Qualityclass ~ country_of_origin, data = clean_data,family = binomial(link = "logit"))
-aic_list$modelCO <- AIC(model_CO)
-model_CO %>%   
-  summary() 
